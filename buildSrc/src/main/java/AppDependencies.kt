@@ -11,6 +11,7 @@ object Dependencies {
     const val gradle = "com.android.tools.build:gradle:4.1.2"
     const val ktLint = "org.jlleitschuh.gradle:ktlint-gradle:9.2.1"
     const val materialDesign = "com.google.android.material:material:1.2.0"
+    const val safeArgs = "androidx.navigation:navigation-safe-args-gradle-plugin:2.3.3"
 }
 
 object Navigation {
@@ -32,4 +33,9 @@ object Android {
     const val appcompat = "androidx.appcompat:appcompat:1.2.0"
     const val coreKtx = "androidx.core:core-ktx:1.3.2"
     const val constraintLayout = "androidx.constraintlayout:constraintlayout:2.0.4"
+}
+
+object Glide {
+    const val glide = "com.github.bumptech.glide:glide:4.12.0"
+    const val compiler = "com.github.bumptech.glide:compiler:4.12.0"
 }

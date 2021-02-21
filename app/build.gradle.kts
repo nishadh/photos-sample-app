@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("kotlin-android")
     id("org.jlleitschuh.gradle.ktlint")
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -73,6 +74,10 @@ dependencies {
 
     // Material Design
     implementation(Dependencies.materialDesign)
+
+    // Glide
+    implementation(Glide.glide)
+    annotationProcessor(Glide.compiler)
 
     // Testing
     testImplementation(Testing.jUnit)
