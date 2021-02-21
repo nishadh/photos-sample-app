@@ -25,7 +25,9 @@ class MainViewModel @Inject constructor(private val repository: PhotosRepository
             )
         }
     }.asLiveData(Dispatchers.Default + viewModelScope.coroutineContext)
+
     var selectedPhoto = MutableLiveData<PhotoUio>()
+    var loading = MutableLiveData<Boolean>(false)
 
     fun deletePhoto(position: Int) {
         viewModelScope.launch {
@@ -48,8 +50,13 @@ class MainViewModel @Inject constructor(private val repository: PhotosRepository
     }
 
     fun addPhoto() {
+        if (loading.value == true) {
+            return
+        }
         viewModelScope.launch {
+            loading.value = true
             repository.addPhoto()
+            loading.value = false
         }
     }
 

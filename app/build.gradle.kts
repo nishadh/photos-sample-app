@@ -92,6 +92,15 @@ dependencies {
     implementation(Room.ktx)
     kapt(Room.compiler)
 
+    // Retrofit
+    implementation(Retrofit.retrofit)
+    implementation(Retrofit.moshiRetrofitConverter)
+
+    // Moshi
+    implementation(Moshi.moshi)
+    implementation(Moshi.codeGen)
+    kapt(Moshi.codeGen)
+
     // Testing
     testImplementation(Testing.jUnit)
     androidTestImplementation(Testing.extJUnit)

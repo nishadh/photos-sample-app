@@ -53,3 +53,13 @@ object Room {
     const val ktx = "androidx.room:room-ktx:2.2.6"
     const val runtime = "androidx.room:room-runtime:2.2.6"
 }
+
+object Moshi {
+    const val moshi = "com.squareup.moshi:moshi-kotlin:1.11.0"
+    const val codeGen = "com.squareup.moshi:moshi-kotlin-codegen:1.11.0"
+}
+
+object Retrofit {
+    const val retrofit = "com.squareup.retrofit2:retrofit:2.9.0"
+    const val moshiRetrofitConverter = "com.squareup.retrofit2:converter-moshi:2.9.0"
+}

@@ -98,6 +98,10 @@ class MainFragment : Fragment() {
             }
         })
 
+        viewModel.loading.observe(viewLifecycleOwner, Observer {
+            binding.progressBar.visibility = if (it) View.VISIBLE else View.GONE
+        })
+
         binding.toggleGridViewButton.setOnClickListener {
             appPreferences.showGridView = !appPreferences.showGridView
             setupList()

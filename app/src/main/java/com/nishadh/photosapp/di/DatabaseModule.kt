@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.nishadh.photosapp.data.PhotosRepository
 import com.nishadh.photosapp.data.local.PhotoDatabase
+import com.nishadh.photosapp.data.remote.PhotosService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,7 +16,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AppModule {
+object DatabaseModule {
 
     @Singleton
     @Provides
@@ -30,23 +31,16 @@ object AppModule {
     @Singleton
     @Provides
     fun provideIoDispatcher() = Dispatchers.IO
-}
-
-/**
- * The binding for TasksRepository is on its own module so that we can replace it easily in tests.
- */
-@Module
-@InstallIn(SingletonComponent::class)
-object PhotosRepositoryModule {
 
     @Singleton
     @Provides
     fun provideTasksRepository(
         database: PhotoDatabase,
+        photosService: PhotosService,
         ioDispatcher: CoroutineDispatcher
     ): PhotosRepository {
         return PhotosRepository(
-            database.photoDao(), ioDispatcher
+            database.photoDao(), photosService, ioDispatcher
         )
     }
 }
