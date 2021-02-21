@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/MainFragment">
+
+    <fragment
+        android:id="@+id/MainFragment"
+        android:name="com.nishadh.photosapp.ui.main.MainFragment"
+        android:label="MainFragment"
+        tools:layout="@layout/main_fragment">
+
+        <action
+            android:id="@+id/action_MainFragment_to_DetailsFragment"
+            app:destination="@id/DetailsFragment" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/DetailsFragment"
+        android:name="com.nishadh.photosapp.ui.detail.DetailsFragment"
+        android:label="MainFragment"
+        tools:layout="@layout/details_fragment">
+
+        <argument
+            android:name="photoId"
+            app:argType="string" />
+    </fragment>
+</navigation>
