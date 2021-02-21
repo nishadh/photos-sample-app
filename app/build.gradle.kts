@@ -103,6 +103,12 @@ dependencies {
 
     // Testing
     testImplementation(Testing.jUnit)
+    testImplementation(Testing.mockito)
+    testImplementation(Testing.core)
+    testImplementation(Testing.coroutines)
+    testImplementation(Testing.room)
+    testImplementation(Testing.okHttp)
+
     androidTestImplementation(Testing.extJUnit)
     androidTestImplementation(Testing.espresso)
 }

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
@@ -30,17 +31,17 @@ class MainFragment : Fragment() {
 
     private val viewModel: MainViewModel by activityViewModels()
     private lateinit var binding: MainFragmentBinding
+
     @Inject
     lateinit var appPreferences: AppPreferences
 
     // Stop bad animation during item swap
     private var ignoreUpdates = false
-    private var scrollOnUpdate = false
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         binding = MainFragmentBinding.inflate(inflater, container, false)
         setupList()
@@ -71,8 +72,6 @@ class MainFragment : Fragment() {
             adapter.itemTouchHelper = itemTouchHelper
             binding.recyclerView.adapter = adapter
         }
-
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -90,16 +89,22 @@ class MainFragment : Fragment() {
                 } else if (adapter is PhotoListViewAdapter) {
                     adapter.submitList(it.toMutableList())
                 }
-                if (scrollOnUpdate) {
-                    scrollOnUpdate = false
-                    binding.recyclerView.smoothScrollToPosition(binding.recyclerView.adapter!!.itemCount);
-
-                }
             }
         })
 
         viewModel.loading.observe(viewLifecycleOwner, Observer {
             binding.progressBar.visibility = if (it) View.VISIBLE else View.GONE
+        })
+
+        viewModel.apiResult.observe(viewLifecycleOwner, Observer {
+            it.getContentIfNotHandled()?.let { success ->
+                if(success) {
+                    binding.recyclerView.smoothScrollToPosition(binding.recyclerView.adapter!!.itemCount);
+                } else {
+                    Toast.makeText(getActivity(), getString(R.string.simple_error_message),
+                            Toast.LENGTH_LONG).show();
+                }
+            }
         })
 
         binding.toggleGridViewButton.setOnClickListener {
@@ -109,19 +114,18 @@ class MainFragment : Fragment() {
 
         binding.toggleDarkModeButton.setOnClickListener {
             val mode =
-                if ((resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
-                    Configuration.UI_MODE_NIGHT_NO
-                ) {
-                    AppCompatDelegate.MODE_NIGHT_YES
-                } else {
-                    AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
-                }
+                    if ((resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+                            Configuration.UI_MODE_NIGHT_NO
+                    ) {
+                        AppCompatDelegate.MODE_NIGHT_YES
+                    } else {
+                        AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
+                    }
             // Change UI Mode
             AppCompatDelegate.setDefaultNightMode(mode)
         }
 
         binding.fab.setOnClickListener {
-            scrollOnUpdate = true
             viewModel.addPhoto()
         }
     }
@@ -129,13 +133,12 @@ class MainFragment : Fragment() {
     private fun onItemClicked(itemView: View, author: TextView, photo: PhotoUio) {
         viewModel.selectedPhoto.value = photo
         val photoCardDetailTransitionName = getString(R.string.photo_card_detail_transition_name)
-        itemView.transitionName=  getString(R.string.photo_card_transition_name, photo.id)
-        val extras: FragmentNavigator.Extras = FragmentNavigatorExtras(itemView to photoCardDetailTransitionName )
+        itemView.transitionName = getString(R.string.photo_card_transition_name, photo.id)
+        val extras: FragmentNavigator.Extras = FragmentNavigatorExtras(itemView to photoCardDetailTransitionName)
         findNavController().navigate(MainFragmentDirections.actionMainFragmentToDetailsFragment(photo.id), extras)
     }
 
-    private fun onItemMoved(fromPosition: Int, toPosition: Int)
-    {
+    private fun onItemMoved(fromPosition: Int, toPosition: Int) {
         ignoreUpdates = true
         viewModel.swapPhotoPosition(fromPosition, toPosition)
     }

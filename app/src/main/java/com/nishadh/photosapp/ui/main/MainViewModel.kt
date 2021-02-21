@@ -1,19 +1,20 @@
 package com.nishadh.photosapp.ui.main
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.nishadh.photosapp.data.PhotosRepository
 import com.nishadh.photosapp.data.local.Photo
+import com.nishadh.photosapp.util.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(private val repository: PhotosRepository): ViewModel() {
+
+    var selectedPhoto = MutableLiveData<PhotoUio>()
 
     var photos = repository.photosFlow.map {
         it?.map { photo ->
@@ -26,8 +27,13 @@ class MainViewModel @Inject constructor(private val repository: PhotosRepository
         }
     }.asLiveData(Dispatchers.Default + viewModelScope.coroutineContext)
 
-    var selectedPhoto = MutableLiveData<PhotoUio>()
-    var loading = MutableLiveData<Boolean>(false)
+    private val _apiResult = MutableLiveData<Event<Boolean>>()
+    val apiResult :LiveData<Event<Boolean>>
+        get() = _apiResult
+
+    private var _loading = MutableLiveData<Boolean>(false)
+    val loading :LiveData<Boolean>
+        get() = _loading
 
     fun deletePhoto(position: Int) {
         viewModelScope.launch {
@@ -39,25 +45,24 @@ class MainViewModel @Inject constructor(private val repository: PhotosRepository
 
     fun swapPhotoPosition(firstPosition: Int, secondPosition: Int) {
         viewModelScope.launch {
-            val firstPhoto = photos.value?.get(firstPosition)
-            val secondPhoto = photos.value?.get(secondPosition)
-            if (firstPhoto != null && secondPhoto != null ){
-                val photo1Dto = Photo( firstPhoto.author, firstPhoto.imageUrl, secondPhoto.position, firstPhoto.id)
-                val photo2Dto = Photo( secondPhoto.author, secondPhoto.imageUrl, firstPhoto.position, secondPhoto.id)
-                repository.savePhotos(photo1Dto, photo2Dto)
+            photos.value?.get(firstPosition)?.let { firstPhoto ->
+                photos.value?.get(secondPosition)?.let { secondPhoto ->
+                    repository.swapPhotos(firstPhoto.id, secondPhoto.id)
+                }
             }
         }
     }
 
     fun addPhoto() {
-        if (loading.value == true) {
+        if (_loading.value == true) {
             return
         }
         viewModelScope.launch {
-            loading.value = true
-            repository.addPhoto()
-            loading.value = false
+            _loading.value = true
+            repository.addRemotePhoto().collect { success ->
+                _loading.value = false
+                _apiResult.value = Event(success)
+            }
         }
     }
-
 }
