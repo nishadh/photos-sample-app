@@ -9,6 +9,7 @@ buildscript {
         classpath(Dependencies.kotlinGradle)
         classpath(Dependencies.ktLint)
         classpath(Dependencies.safeArgs)
+        classpath(Dependencies.daggerHilt)
     }
 }
 

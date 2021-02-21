@@ -15,12 +15,17 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.nishadh.photosapp.databinding.MainFragmentBinding
 import com.nishadh.photosapp.ui.home.adapter.PhotoCardViewAdapter
 import com.nishadh.photosapp.ui.home.adapter.PhotoListViewAdapter
+import com.nishadh.photosapp.util.AppPreferences
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainFragment : Fragment() {
 
     private val viewModel: MainViewModel by viewModels()
     private lateinit var binding: MainFragmentBinding
-    private var showGridView = true
+    @Inject
+    lateinit var appPreferences: AppPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -74,7 +79,7 @@ class MainFragment : Fragment() {
 
 
     private fun submitList() {
-        if (showGridView) {
+        if (appPreferences.showGridView) {
             binding.recyclerView.layoutManager = GridLayoutManager(activity, 2)
             binding.recyclerView.adapter = PhotoCardViewAdapter(this::onItemClicked).apply {
                 viewModel.photos.value?.let {
@@ -104,7 +109,7 @@ class MainFragment : Fragment() {
         })
 
         binding.toggleGridViewButton.setOnClickListener {
-            showGridView = !showGridView
+            appPreferences.showGridView = !appPreferences.showGridView
             submitList()
         }
 

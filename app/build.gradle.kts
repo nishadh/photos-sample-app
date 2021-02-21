@@ -1,8 +1,10 @@
 plugins {
     id("com.android.application")
     id("kotlin-android")
+    id("kotlin-kapt")
     id("org.jlleitschuh.gradle.ktlint")
     id("androidx.navigation.safeargs.kotlin")
+    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -78,6 +80,12 @@ dependencies {
     // Glide
     implementation(Glide.glide)
     annotationProcessor(Glide.compiler)
+
+    // Hilt + Dagger
+    implementation(Hilt.hiltAndroid)
+    implementation(Hilt.hiltViewModel)
+    kapt(Hilt.daggerCompiler)
+    kapt(Hilt.hiltCompiler)
 
     // Testing
     testImplementation(Testing.jUnit)

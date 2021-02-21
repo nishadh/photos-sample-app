@@ -12,6 +12,7 @@ object Dependencies {
     const val ktLint = "org.jlleitschuh.gradle:ktlint-gradle:9.2.1"
     const val materialDesign = "com.google.android.material:material:1.2.0"
     const val safeArgs = "androidx.navigation:navigation-safe-args-gradle-plugin:2.3.3"
+    const val daggerHilt = "com.google.dagger:hilt-android-gradle-plugin:2.32-alpha"
 }
 
 object Navigation {
@@ -38,4 +39,11 @@ object Android {
 object Glide {
     const val glide = "com.github.bumptech.glide:glide:4.12.0"
     const val compiler = "com.github.bumptech.glide:compiler:4.12.0"
+}
+
+object Hilt {
+    const val daggerCompiler = "com.google.dagger:hilt-android-compiler:2.31-alpha"
+    const val hiltCompiler = "androidx.hilt:hilt-compiler:1.0.0-alpha02"
+    const val hiltViewModel = "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha02"
+    const val hiltAndroid = "com.google.dagger:hilt-android:2.31-alpha"
 }
