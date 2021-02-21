@@ -2,7 +2,11 @@
 App built with latest Android technologies
 
 ## Screenshots
-<img src="screenshots/screenshot.gif" height="600" alt="Photos demo"/>
+
+<p float="left">
+<img src="screenshots/screenshot1.gif" height="600" alt="Photos demo"/>
+<img src="screenshots/screenshot2.gif" height="600" alt="Photos demo 2"/>
+</p>
 
 ## Built With 🛠
 - [Kotlin](https://kotlinlang.org/) - First class and official programming language for Android development.
