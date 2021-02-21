@@ -87,6 +87,11 @@ dependencies {
     kapt(Hilt.daggerCompiler)
     kapt(Hilt.hiltCompiler)
 
+    // Room
+    implementation(Room.runtime)
+    implementation(Room.ktx)
+    kapt(Room.compiler)
+
     // Testing
     testImplementation(Testing.jUnit)
     androidTestImplementation(Testing.extJUnit)

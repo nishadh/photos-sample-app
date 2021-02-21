@@ -41,47 +41,6 @@ class MainFragment : Fragment() {
         return binding.root
     }
 
-    private fun showMockData() {
-        viewModel.photos.value = arrayOf(
-            PhotoUio(
-                "1",
-                "Matthew Wiebe",
-                "https://picsum.photos/id/1025/4951/3301"
-            ),
-            PhotoUio(
-                "2",
-                "Мартин Тасев",
-                "https://picsum.photos/id/1024/1920/1280"
-            ),
-            PhotoUio(
-                "3",
-                "William Hook",
-                "https://picsum.photos/id/1023/3955/2094"
-            ),
-            PhotoUio(
-                "4",
-                "Vashishtha Jogi",
-                "https://picsum.photos/id/1022/6000/3376"
-            ),
-            PhotoUio(
-                "5",
-                "Frances Gunn",
-                "https://picsum.photos/id/1021/2048/1206"
-            ),
-            PhotoUio(
-                "6",
-                "Adam Willoughby-Knox",
-                "https://picsum.photos/id/1020/4288/2848"
-            ),
-            PhotoUio(
-                "7",
-                "Ben Moore",
-                "https://picsum.photos/id/102/4320/3240"
-            )
-        )
-    }
-
-
     private fun submitList() {
         if (appPreferences.showGridView) {
             binding.recyclerView.layoutManager = GridLayoutManager(activity, 2)
@@ -133,9 +92,47 @@ class MainFragment : Fragment() {
         }
 
         binding.fab.setOnClickListener {
+            val photos = arrayOf(
+                PhotoUio(
+                    "1",
+                    "Matthew Wiebe",
+                    "https://picsum.photos/id/1025/4951/3301"
+                ),
+                PhotoUio(
+                    "2",
+                    "Мартин Тасев",
+                    "https://picsum.photos/id/1024/1920/1280"
+                ),
+                PhotoUio(
+                    "3",
+                    "William Hook",
+                    "https://picsum.photos/id/1023/3955/2094"
+                ),
+                PhotoUio(
+                    "4",
+                    "Vashishtha Jogi",
+                    "https://picsum.photos/id/1022/6000/3376"
+                ),
+                PhotoUio(
+                    "5",
+                    "Frances Gunn",
+                    "https://picsum.photos/id/1021/2048/1206"
+                ),
+                PhotoUio(
+                    "6",
+                    "Adam Willoughby-Knox",
+                    "https://picsum.photos/id/1020/4288/2848"
+                ),
+                PhotoUio(
+                    "7",
+                    "Ben Moore",
+                    "https://picsum.photos/id/102/4320/3240"
+                )
+            )
+            viewModel.addNewPhoto(photos.toList().shuffled().first())
+            binding.recyclerView.smoothScrollToPosition(binding.recyclerView.adapter!!.itemCount);
         }
 
-        showMockData()
     }
 
     private fun onItemClicked(itemView: View, author: TextView, photo: PhotoUio) {

@@ -47,3 +47,9 @@ object Hilt {
     const val hiltViewModel = "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha02"
     const val hiltAndroid = "com.google.dagger:hilt-android:2.31-alpha"
 }
+
+object Room {
+    const val compiler = "androidx.room:room-compiler:2.2.6"
+    const val ktx = "androidx.room:room-ktx:2.2.6"
+    const val runtime = "androidx.room:room-runtime:2.2.6"
+}
