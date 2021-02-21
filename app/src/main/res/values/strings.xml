@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Photos App</string>
+    <string name="photo_card_transition_name">email_card_%1$s</string>
     <string name="photo_card_detail_transition_name">email_card_detail</string>
     <string name="lorem_ipsum_text">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam sollicitudin viverra mauris eu egestas. Phasellus eget molestie odio. Cras placerat ornare quam, vitae tincidunt dolor accumsan eu. Suspendisse convallis libero ac lorem ullamcorper, eleifend dictum tortor ornare. Nunc nibh magna, mattis nec odio non, tempus euismod lorem. Quisque purus elit, commodo in cursus sed, mattis eget nisl. Etiam quis risus rhoncus, viverra enim sed, hendrerit turpis. Pellentesque sit amet justo a est lobortis dignissim in quis sem. Praesent sollicitudin enim est, eget tincidunt ipsum ornare gravida. Nullam odio velit, blandit quis lorem et, efficitur dignissim eros. In dictum, turpis at pellentesque congue, nulla quam vulputate velit, vitae tincidunt enim lorem ut mauris. Nulla facilisi. Cras venenatis ac dui id dapibus. Nam et tellus vel arcu iaculis dictum et vel eros.\n\n

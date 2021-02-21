@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -101,6 +102,8 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        postponeEnterTransition()
+        requireView().doOnPreDraw { startPostponedEnterTransition() }
 
         viewModel.photos.observe(viewLifecycleOwner, Observer {
             val adapter = binding.recyclerView.adapter
@@ -137,7 +140,10 @@ class MainFragment : Fragment() {
 
     private fun onItemClicked(itemView: View, author: TextView, photo: PhotoUio) {
         viewModel.selectedPhoto.value = photo
-        findNavController().navigate(MainFragmentDirections.actionMainFragmentToDetailsFragment(photo.id))
+        val photoCardDetailTransitionName = getString(R.string.photo_card_detail_transition_name)
+        itemView.transitionName=  getString(R.string.photo_card_transition_name, photo.id)
+        val extras: FragmentNavigator.Extras = FragmentNavigatorExtras(itemView to photoCardDetailTransitionName )
+        findNavController().navigate(MainFragmentDirections.actionMainFragmentToDetailsFragment(photo.id), extras)
     }
 
 }
