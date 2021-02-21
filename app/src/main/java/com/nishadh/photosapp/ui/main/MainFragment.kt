@@ -8,10 +8,13 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.FragmentNavigator
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.nishadh.photosapp.R
 import com.nishadh.photosapp.databinding.MainFragmentBinding
 import com.nishadh.photosapp.ui.home.adapter.PhotoCardViewAdapter
 import com.nishadh.photosapp.ui.home.adapter.PhotoListViewAdapter
@@ -22,7 +25,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainFragment : Fragment() {
 
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: MainViewModel by activityViewModels()
     private lateinit var binding: MainFragmentBinding
     @Inject
     lateinit var appPreferences: AppPreferences
@@ -133,6 +136,7 @@ class MainFragment : Fragment() {
     }
 
     private fun onItemClicked(itemView: View, author: TextView, photo: PhotoUio) {
+        viewModel.selectedPhoto.value = photo
         findNavController().navigate(MainFragmentDirections.actionMainFragmentToDetailsFragment(photo.id))
     }
 
