@@ -15,10 +15,12 @@ import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.nishadh.photosapp.R
 import com.nishadh.photosapp.databinding.MainFragmentBinding
 import com.nishadh.photosapp.ui.home.adapter.PhotoCardViewAdapter
 import com.nishadh.photosapp.ui.home.adapter.PhotoListViewAdapter
+import com.nishadh.photosapp.ui.main.touchHelper.PhotoItemTouchHelperCallback
 import com.nishadh.photosapp.util.AppPreferences
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -31,32 +33,46 @@ class MainFragment : Fragment() {
     @Inject
     lateinit var appPreferences: AppPreferences
 
+    // Stop bad animation during item swap
+    private var ignoreUpdates = false
+    private var scrollOnUpdate = false
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = MainFragmentBinding.inflate(inflater, container, false)
-        submitList()
+        setupList()
         return binding.root
     }
 
-    private fun submitList() {
+    private fun setupList() {
         if (appPreferences.showGridView) {
             binding.recyclerView.layoutManager = GridLayoutManager(activity, 2)
-            binding.recyclerView.adapter = PhotoCardViewAdapter(this::onItemClicked).apply {
+            val adapter = PhotoCardViewAdapter(this::onItemClicked, this::onItemMoved, this::onItemRemoved).apply {
                 viewModel.photos.value?.let {
                     submitList(it.toMutableList())
                 }
             }
+            val itemTouchHelper = ItemTouchHelper(PhotoItemTouchHelperCallback(adapter))
+            itemTouchHelper.attachToRecyclerView(binding.recyclerView)
+            adapter.itemTouchHelper = itemTouchHelper
+            binding.recyclerView.adapter = adapter
         } else {
             binding.recyclerView.layoutManager = GridLayoutManager(activity, 1)
-            binding.recyclerView.adapter = PhotoListViewAdapter(this::onItemClicked).apply {
+            val adapter = PhotoListViewAdapter(this::onItemClicked, this::onItemMoved, this::onItemRemoved).apply {
                 viewModel.photos.value?.let {
                     submitList(it.toMutableList())
                 }
             }
+            val itemTouchHelper = ItemTouchHelper(PhotoItemTouchHelperCallback(adapter))
+            itemTouchHelper.attachToRecyclerView(binding.recyclerView)
+            adapter.itemTouchHelper = itemTouchHelper
+            binding.recyclerView.adapter = adapter
         }
+
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -65,17 +81,26 @@ class MainFragment : Fragment() {
         requireView().doOnPreDraw { startPostponedEnterTransition() }
 
         viewModel.photos.observe(viewLifecycleOwner, Observer {
-            val adapter = binding.recyclerView.adapter
-            if (adapter is PhotoCardViewAdapter) {
-                adapter.submitList(it.toMutableList())
-            } else if (adapter is PhotoListViewAdapter) {
-                adapter.submitList(it.toMutableList())
+            if (ignoreUpdates) {
+                ignoreUpdates = false
+            } else {
+                val adapter = binding.recyclerView.adapter
+                if (adapter is PhotoCardViewAdapter) {
+                    adapter.submitList(it.toMutableList())
+                } else if (adapter is PhotoListViewAdapter) {
+                    adapter.submitList(it.toMutableList())
+                }
+                if (scrollOnUpdate) {
+                    scrollOnUpdate = false
+                    binding.recyclerView.smoothScrollToPosition(binding.recyclerView.adapter!!.itemCount);
+
+                }
             }
         })
 
         binding.toggleGridViewButton.setOnClickListener {
             appPreferences.showGridView = !appPreferences.showGridView
-            submitList()
+            setupList()
         }
 
         binding.toggleDarkModeButton.setOnClickListener {
@@ -92,47 +117,9 @@ class MainFragment : Fragment() {
         }
 
         binding.fab.setOnClickListener {
-            val photos = arrayOf(
-                PhotoUio(
-                    "1",
-                    "Matthew Wiebe",
-                    "https://picsum.photos/id/1025/4951/3301"
-                ),
-                PhotoUio(
-                    "2",
-                    "Мартин Тасев",
-                    "https://picsum.photos/id/1024/1920/1280"
-                ),
-                PhotoUio(
-                    "3",
-                    "William Hook",
-                    "https://picsum.photos/id/1023/3955/2094"
-                ),
-                PhotoUio(
-                    "4",
-                    "Vashishtha Jogi",
-                    "https://picsum.photos/id/1022/6000/3376"
-                ),
-                PhotoUio(
-                    "5",
-                    "Frances Gunn",
-                    "https://picsum.photos/id/1021/2048/1206"
-                ),
-                PhotoUio(
-                    "6",
-                    "Adam Willoughby-Knox",
-                    "https://picsum.photos/id/1020/4288/2848"
-                ),
-                PhotoUio(
-                    "7",
-                    "Ben Moore",
-                    "https://picsum.photos/id/102/4320/3240"
-                )
-            )
-            viewModel.addNewPhoto(photos.toList().shuffled().first())
-            binding.recyclerView.smoothScrollToPosition(binding.recyclerView.adapter!!.itemCount);
+            scrollOnUpdate = true
+            viewModel.addPhoto()
         }
-
     }
 
     private fun onItemClicked(itemView: View, author: TextView, photo: PhotoUio) {
@@ -141,6 +128,16 @@ class MainFragment : Fragment() {
         itemView.transitionName=  getString(R.string.photo_card_transition_name, photo.id)
         val extras: FragmentNavigator.Extras = FragmentNavigatorExtras(itemView to photoCardDetailTransitionName )
         findNavController().navigate(MainFragmentDirections.actionMainFragmentToDetailsFragment(photo.id), extras)
+    }
+
+    private fun onItemMoved(fromPosition: Int, toPosition: Int)
+    {
+        ignoreUpdates = true
+        viewModel.swapPhotoPosition(fromPosition, toPosition)
+    }
+
+    private fun onItemRemoved(position: Int) {
+        viewModel.deletePhoto(position)
     }
 
 }

@@ -14,22 +14,42 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(private val repository: PhotosRepository): ViewModel() {
+
     var photos = repository.photosFlow.map {
         it?.map { photo ->
             PhotoUio(
                 photo.id,
                 photo.author,
-                photo.imageUrl
+                photo.imageUrl,
+                photo.position
             )
         }
     }.asLiveData(Dispatchers.Default + viewModelScope.coroutineContext)
     var selectedPhoto = MutableLiveData<PhotoUio>()
 
-    fun addNewPhoto(photo: PhotoUio) {
+    fun deletePhoto(position: Int) {
         viewModelScope.launch {
-            val newPostion = photos.value?.let { it.size } ?: 0
-            val photoDto = Photo(photo.author, photo.imageUrl, newPostion)
-            repository.savePhoto(photoDto)
+            photos.value?.get(position)?.let {
+                repository.deletePhotoById(it.id)
+            }
+        }
+    }
+
+    fun swapPhotoPosition(firstPosition: Int, secondPosition: Int) {
+        viewModelScope.launch {
+            val firstPhoto = photos.value?.get(firstPosition)
+            val secondPhoto = photos.value?.get(secondPosition)
+            if (firstPhoto != null && secondPhoto != null ){
+                val photo1Dto = Photo( firstPhoto.author, firstPhoto.imageUrl, secondPhoto.position, firstPhoto.id)
+                val photo2Dto = Photo( secondPhoto.author, secondPhoto.imageUrl, firstPhoto.position, secondPhoto.id)
+                repository.savePhotos(photo1Dto, photo2Dto)
+            }
+        }
+    }
+
+    fun addPhoto() {
+        viewModelScope.launch {
+            repository.addPhoto()
         }
     }
 

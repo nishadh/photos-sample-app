@@ -39,13 +39,22 @@ interface PhotosDao {
     suspend fun insertPhoto(photo: Photo)
 
     /**
-     * Update a task.
+     * Insert a task in the database. If the task already exists, replace it.
      *
-     * @param task task to be updated
-     * @return the number of tasks updated. This should always be 1.
+     * @param task the task to be inserted.
      */
-    @Update
-    suspend fun updateTask(photo: Photo): Int
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertPhotos(photo1: Photo, photo2: Photo)
+
+
+    /**
+     * Select a task by id.
+     *
+     * @param taskId the task id.
+     * @return the task with taskId.
+     */
+    @Query("SELECT MAX(position) FROM Photos")
+    suspend fun getMaxPosition(): Int?
 
     /**
      * Delete a task by id.
