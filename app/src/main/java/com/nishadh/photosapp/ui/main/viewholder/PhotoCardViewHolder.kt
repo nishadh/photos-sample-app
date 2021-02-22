@@ -23,6 +23,8 @@ class PhotoCardViewHolder(private val binding: ItemPhotoCardViewBinding) :
 
         Glide.with(itemView.context).load(photo.imageUrl).into(binding.imageView);
 
+        itemView.transitionName = itemView.context.getString(R.string.photo_card_transition_name, photo.id)
+
         binding.root.setOnClickListener {
             onItemClicked(itemView, binding.author, photo)
         }

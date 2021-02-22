@@ -133,7 +133,6 @@ class MainFragment : Fragment() {
     private fun onItemClicked(itemView: View, author: TextView, photo: PhotoUio) {
         viewModel.selectedPhoto.value = photo
         val photoCardDetailTransitionName = getString(R.string.photo_card_detail_transition_name)
-        itemView.transitionName = getString(R.string.photo_card_transition_name, photo.id)
         val extras: FragmentNavigator.Extras = FragmentNavigatorExtras(itemView to photoCardDetailTransitionName)
         findNavController().navigate(MainFragmentDirections.actionMainFragmentToDetailsFragment(photo.id), extras)
     }
