@@ -59,7 +59,7 @@ class DetailsFragment: Fragment() {
         binding.root.transitionName = getString(com.nishadh.photosapp.R.string.photo_card_detail_transition_name)
         viewModel.selectedPhoto.observe(viewLifecycleOwner, Observer {
             Glide.with(requireActivity()).load(it.imageUrl).into(binding.imageView);
-            binding.author.text = it.author
+            binding.toolbar.title = it.author
             startPostponedEnterTransition();
         })
     }
